@@ -1,9 +1,19 @@
 //control
 var mode;
 
+// speed and velocity etc
+let fuel = 100;
+let playerVelX = 5;
+let beefSpeed = 3;
+let gravity = 4;
+
+//setup variables
+let height = 640;
+let width = 740;
+
 //player or the beef
-let beefPosX = 100;
-let beefPosY = 50;
+let beefPosX = 200;
+let beefPosY = 100;
 
 //grills
 var gX = 200;
@@ -24,17 +34,17 @@ let sizeSpeedTextSize = 0.03;
 
 function setup() {
   mode = 0; //game hasn't started
-  createCanvas(740, 640);  
+  createCanvas(width, height);  
   textAlign(CENTER);
-  rectMode(CENTER);
   noStroke();
 
 } //close setup
 
 function game(){
-  clouds();
+  gameBackground();
   cloudAnimation();
   drawRawBeef();
+  playerMechanics();
   fallingMechanics();
 
 } //close game
@@ -50,16 +60,21 @@ function startState(){
     startScreen();
     startScreenTextAnimation();
   if (mode==1){
+    instructionScreen();
+  }
+  if (mode==2){
     game ();
   }
 } //close startState
 
 function keyPressed() {
-  if (keyCode===ENTER)
+  if (keyCode===ENTER) 
     mode=1;
+  if (keyCode===SPACE)   //spacebar IS NOT WORKING ATM
+    mode=2;
 }
 
-function clouds(){
+function gameBackground(){
   background(114, 186, 213);
 
   fill(203, 238, 243);
@@ -75,8 +90,11 @@ function clouds(){
   circle(leftCloudX-65, 458, 55);
   circle(leftCloudX+20, 448, 80);
   circle(leftCloudX+60, 460, 50);
+
+  textSize(20);
+  text('BOOST  ' + fuel, 670, 30);
   
-} //close cloud 
+} //close game background 
 
 function cloudAnimation(){
   //move clouds
@@ -117,13 +135,40 @@ Stack Overflow. https://stackoverflow.com/questions/35156661/how-to-make-the-siz
 } //end start screen animation
 
 function fallingMechanics(){
+  drawRawBeef(beefPosX, beefPosY += 2);
 
+  if (beefPosY > height){
+    beefPosY = 0;
+    beefPosX = random(width);
+  }
+}
 
+function playerMechanics(){
+  if (keyIsDown(87)) {   //W key or up
+    fuel -= 1;
+    playerVelX = 1;
+    beefPosY -= beefSpeed;
+  }
+  else {
+    playerVelX = 5;
+  }
+  if (keyIsDown(65)) {   //A key or left
+    fuel -= 1;
+    playerVelX = 2;
+    beefPosX -= beefSpeed;
+  }
+  if (keyIsDown(68)) {   //D key or right
+    fuel -= 1;
+    playerVelX = 2;
+    beefPosX += beefSpeed;
+  }
 }
 
 function drawRawBeef(){
+  
   push();
   translate(beefPosX, beefPosY);
+  scale(0.4, 0.4, 1);
 
   /*one pixel
   fill(173, 40, 49);
@@ -133,96 +178,108 @@ function drawRawBeef(){
   //outline 
   fill(251, 195, 188);
 
-  rect(beefPosX, beefPosY - 40, 180, 10); //start long line then left
-  rect(beefPosX - 30, beefPosY - 30, 30, 10);
-  rect(beefPosX - 50, beefPosY - 20, 20, 10);
-  rect(beefPosX - 70, beefPosY - 10, 20, 10);
-  rect(beefPosX - 80, beefPosY, 10, 10);
-  rect(beefPosX - 90, beefPosY + 10, 10, 10);
-  rect(beefPosX - 100, beefPosY + 20, 10, 10);
-  rect(beefPosX - 110, beefPosY + 30, 10, 90);
-  rect(beefPosX - 100, beefPosY + 90, 10, 50);
-  rect(beefPosX - 90, beefPosY + 100, 10, 50);
-  rect(beefPosX - 80, beefPosY + 110, 10, 50);
-  rect(beefPosX - 70, beefPosY + 120, 30, 50);
-  rect(beefPosX - 40, beefPosY + 130, 140, 50);
-  rect(beefPosX + 100, beefPosY + 120, 40, 50);
-  rect(beefPosX + 140, beefPosY + 110, 20, 50);
-  rect(beefPosX + 160, beefPosY + 100, 10, 50);
-  rect(beefPosX + 190, beefPosY + 70, 10, 50);
-  rect(beefPosX + 180, beefPosY + 80, 10, 50);
-  rect(beefPosX + 170, beefPosY + 90, 10, 50);
-  rect(beefPosX + 200, beefPosY + 60, 20, 50);
-  rect(beefPosX + 220, beefPosY + 50, 50, 50);
-  rect(beefPosX + 270, beefPosY + 40, 10, 50);
-  rect(beefPosX + 280, beefPosY, 10, 80);
-  rect(beefPosX + 270, beefPosY - 10, 10, 10);
-  rect(beefPosX + 230, beefPosY - 20, 40, 10);
-  rect(beefPosX + 180, beefPosY - 30, 50, 10);
+  rect( 0, - 40, 180, 10); //start long line then left
+  rect( - 30,  - 30, 30, 10);
+  rect( - 50,  - 20, 20, 10);
+  rect( - 70,  - 10, 20, 10);
+  rect( - 80, 0, 10, 10);
+  rect( - 90,  + 10, 10, 10);
+  rect( - 100,  + 20, 10, 10);
+  rect( - 110,  + 30, 10, 90);
+  rect( - 100,  + 90, 10, 50);
+  rect( - 90,  + 100, 10, 50);
+  rect( - 80,  + 110, 10, 50);
+  rect( - 70,  + 120, 30, 50);
+  rect( - 40,  + 130, 140, 50);
+  rect( + 100,  + 120, 40, 50);
+  rect( + 140,  + 110, 20, 50);
+  rect( + 160,  + 100, 10, 50);
+  rect( + 190,  + 70, 10, 50);
+  rect( + 180,  + 80, 10, 50);
+  rect( + 170,  + 90, 10, 50);
+  rect( + 200,  + 60, 20, 50);
+  rect( + 220,  + 50, 50, 50);
+  rect( + 270,  + 40, 10, 50);
+  rect( + 280, 0, 10, 80);
+  rect( + 270,  - 10, 10, 10);
+  rect( + 230,  - 20, 40, 10);
+  rect( + 180,  - 30, 50, 10);
   
   //tallow outline
   fill(204, 68, 75);
 
-  rect(beefPosX, beefPosY - 30, 180, 10);
-  rect(beefPosX - 30, beefPosY - 20, 30, 10);
-  rect(beefPosX - 50, beefPosY - 10, 20, 10);
-  rect(beefPosX - 70, beefPosY, 20, 10);
-  rect(beefPosX - 80, beefPosY + 10, 10, 10);
-  rect(beefPosX - 90, beefPosY + 20, 10, 10);
-  rect(beefPosX - 100, beefPosY + 30, 10, 60);
-  rect(beefPosX - 90, beefPosY + 90, 10, 10);
-  rect(beefPosX - 80, beefPosY + 100, 10, 10);
-  rect(beefPosX - 70, beefPosY + 110, 30, 10);
-  rect(beefPosX - 40, beefPosY + 120, 140, 10);
-  rect(beefPosX + 100, beefPosY + 110, 40, 10);
-  rect(beefPosX + 140, beefPosY + 100, 20, 10);
-  rect(beefPosX + 160, beefPosY + 90, 10, 10);
-  rect(beefPosX + 170, beefPosY + 80, 10, 10);
-  rect(beefPosX + 180, beefPosY + 70, 10, 10);
-  rect(beefPosX + 190, beefPosY + 60, 10, 10);
-  rect(beefPosX + 200, beefPosY + 50, 20, 10);
-  rect(beefPosX + 220, beefPosY + 40, 50, 10);
-  rect(beefPosX + 270, beefPosY, 10, 40);
-  rect(beefPosX + 230, beefPosY - 10, 40, 10);
-  rect(beefPosX + 180, beefPosY - 20, 50, 10);
+  rect(0,  - 30, 180, 10);
+  rect( - 30,  - 20, 30, 10);
+  rect( - 50,  - 10, 20, 10);
+  rect( - 70, 0, 20, 10);
+  rect( - 80,  + 10, 10, 10);
+  rect( - 90,  + 20, 10, 10);
+  rect( - 100,  + 30, 10, 60);
+  rect( - 90,  + 90, 10, 10);
+  rect( - 80,  + 100, 10, 10);
+  rect( - 70,  + 110, 30, 10);
+  rect( - 40,  + 120, 140, 10);
+  rect( + 100,  + 110, 40, 10);
+  rect( + 140,  + 100, 20, 10);
+  rect( + 160,  + 90, 10, 10);
+  rect( + 170,  + 80, 10, 10);
+  rect( + 180,  + 70, 10, 10);
+  rect( + 190,  + 60, 10, 10);
+  rect( + 200,  + 50, 20, 10);
+  rect( + 220,  + 40, 50, 10);
+  rect( + 270, 0, 10, 40);
+  rect( + 230,  - 10, 40, 10);
+  rect( + 180,  - 20, 50, 10);
   
   //red 
   fill(173, 40, 49);
 
-  rect(beefPosX, beefPosY, 170, 90);
-  rect(beefPosX - 30, beefPosY - 10, 30, 120);
-  rect(beefPosX - 60, beefPosY, 20, 110);
-  rect(beefPosX - 70, beefPosY + 10, 10, 100);
-  rect(beefPosX - 80, beefPosY + 20, 10, 80);
-  rect(beefPosX - 90, beefPosY + 30, 10, 60);
-  rect(beefPosX - 40, beefPosY, 10, 120);
-  rect(beefPosX, beefPosY + 70, 140, 40);
-  rect(beefPosX + 140, beefPosY + 80, 20, 20);
-  rect(beefPosX + 160, beefPosY + 80, 10, 10);
-  rect(beefPosX + 180, beefPosY - 10, 10, 80);
-  rect(beefPosX + 190, beefPosY - 10, 10, 70);
-  rect(beefPosX + 200, beefPosY - 10, 20, 60);
-  rect(beefPosX, beefPosY + 100, 100, 20);
-  rect(beefPosX + 170, beefPosY + 40, 10, 40);
+
+  rect(0,  + 40, 170, 40);
+  rect( - 30,  + 40, 30, 80);
+  rect( - 60, 0, 90, 110);
+  rect( - 70,  + 10, 10, 100);
+  rect( - 80,  + 20, 10, 80);
+  rect( - 90,  + 30, 10, 60);
+  rect( - 40, 0, 10, 120);
+  rect(0,  + 70, 140, 40);
+  rect( + 140,  + 80, 20, 20);
+  rect( + 160,  + 80, 10, 10);
+  rect( + 180,  - 10, 10, 80);
+  rect( + 190,  - 10, 10, 70);
+  rect( + 200,  - 10, 20, 60);
+  rect(0,  + 100, 100, 20);
+  rect( + 170,  + 40, 10, 40);
   
   //dark red or shadow
   fill(128, 14, 19);
 
-  rect(beefPosX + 30, beefPosY, 240, 40);
-  rect(beefPosX - 30, beefPosY - 10, 260, 10);
-  rect(beefPosX, beefPosY - 20, 180, 10);
-  rect(beefPosX - 40, beefPosY, 60, 10);
-  rect(beefPosX, beefPosY + 10, 40, 10);
+  rect( + 30, 0, 240, 40);
+  rect( - 30,  - 10, 260, 10);
+  rect(0,  - 20, 180, 10);
+  rect( - 40, 0, 60, 10);
+  rect(0,  + 10, 40, 10);
   
   //highlights
   fill(223, 115, 115);
   
-  rect(beefPosX - 30, beefPosY + 110, 90, 10);
-  rect(beefPosX - 50, beefPosY + 100, 10, 10);
-  rect(beefPosX + 110, beefPosY + 100, 20, 10);
-  rect(beefPosX + 80, beefPosY + 110, 10, 10);
+  rect( - 30,  + 110, 90, 10);
+  rect( - 50,  + 100, 10, 10);
+  rect( + 110,  + 100, 20, 10);
+  rect( + 80,  + 110, 10, 10);
 
   pop();
 
+}
+
+function drawCookedBeef(){
+
+}
+
+function instructionScreen(){
+  background(0);
+  fill(255);
+  textSize(textSizePrelude);
+  text("PRESS THE SPACEBAR TO ACCEPT CHALLENGE", 370, 400);
 }
 

@@ -2,7 +2,7 @@
 var mode;
 
 // speed and velocity etc
-let fuel = 100;
+let boost = 100;
 let playerVelX = 5;
 let beefSpeed = 3;
 let gravity = 4;
@@ -15,7 +15,13 @@ let width = 740;
 let beefPosX = 200;
 let beefPosY = 100;
 
-//grills
+//title art
+let xFullTitle = 240;
+let yFullTitle = 140;
+let xCookedTitle = - 90;
+let yCookedTitle = - 50;
+
+//grill
 var gX = 200;
 var gY = 730;
 var gWidth = 100;
@@ -26,10 +32,16 @@ let leftCloudX = 200;
 let rightCloudX = 500;
 
 //text
-let textSizePrelude = 15;
+let textSizeAnimation = 15;
 let minTextSize = 15;
 let maxTextSize = 18;
 let sizeSpeedTextSize = 0.03;
+
+//try again button
+let tryAgainX = 300;
+let tryAgainY = 400;
+let tryAgainWidth = 150;
+let tryAgainHeight = 50;
 
 
 function setup() {
@@ -46,8 +58,39 @@ function game(){
   drawRawBeef();
   playerMechanics();
   fallingMechanics();
+  gameOver();
 
 } //close game
+
+function gameOver(){
+  if (boost <= 0) {
+    gravity = 0;
+    beefSpeed = 0;
+    boost = 0;
+    textStyle(NORMAL);
+    fill(255, 255, 255);
+    text("YOU'RE COOKED.", width / 2, height / 2);
+    textSize(15);
+    text("TRY AGAIN?", width / 2, 350);
+    fill(173, 40, 49);
+    rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
+    fill(203, 238, 243);
+    textStyle(BOLD);
+    textSize(18);
+    text("YES", tryAgainX + 75, tryAgainY + 33);
+  }
+}
+
+function mouseInsideTryAgainButton(){
+  return mouseX > tryAgainX && mouseX < tryAgainX +
+  tryAgainWidth && mouseY > tryAgainY && mouseY < tryAgainY + tryAgainHeight;
+}
+
+function mousePressed(){
+  if (mouseInsideTryAgainButton()) {
+    mode=1;
+  }
+}
 
 function draw() {
   startState();
@@ -70,7 +113,7 @@ function startState(){
 function keyPressed() {
   if (keyCode===ENTER) 
     mode=1;
-  if (keyCode===SPACE)   //spacebar IS NOT WORKING ATM
+  if (keyCode===39)   //right arrow
     mode=2;
 }
 
@@ -92,7 +135,7 @@ function gameBackground(){
   circle(leftCloudX+60, 460, 50);
 
   textSize(20);
-  text('BOOST  ' + fuel, 670, 30);
+  text('BOOST  ' + boost, 670, 30);
   
 } //close game background 
 
@@ -117,15 +160,16 @@ function cloudAnimation(){
 } //close cloud animation
 
 function startScreen(){
-  background(0);
-  fill(255);
-  textSize(textSizePrelude);
-  text("PRESS ENTER TO START", 370, 400);
+  background(114, 186, 213);
+  fill(203, 238, 243);
+  textSize(textSizeAnimation);
+  text("PRESS ENTER TO START", 370, 450);
+  drawTitleScreen();
 
 } //end start screen
 
 function startScreenTextAnimation(){
-  textSizePrelude = map(sin(frameCount * sizeSpeedTextSize), -1.0, 1.0, minTextSize, maxTextSize);
+  textSizeAnimation = map(sin(frameCount * sizeSpeedTextSize), -1.0, 1.0, minTextSize, maxTextSize);
   /*
 line 109 to 111 taken from mo.h, George Profenza, 
 & Kevin Workman. (2016, February 2). How to make the size of 
@@ -145,7 +189,7 @@ function fallingMechanics(){
 
 function playerMechanics(){
   if (keyIsDown(87)) {   //W key or up
-    fuel -= 1;
+    boost -= 1;
     playerVelX = 1;
     beefPosY -= beefSpeed;
   }
@@ -153,12 +197,12 @@ function playerMechanics(){
     playerVelX = 5;
   }
   if (keyIsDown(65)) {   //A key or left
-    fuel -= 1;
+    boost -= 1;
     playerVelX = 2;
     beefPosX -= beefSpeed;
   }
   if (keyIsDown(68)) {   //D key or right
-    fuel -= 1;
+    boost -= 1;
     playerVelX = 2;
     beefPosX += beefSpeed;
   }
@@ -276,10 +320,100 @@ function drawCookedBeef(){
 
 }
 
-function instructionScreen(){
-  background(0);
+function drawTitleScreen(){
+  push();
+  translate(xFullTitle, yFullTitle);
+  
   fill(255);
-  textSize(textSizePrelude);
-  text("PRESS THE SPACEBAR TO ACCEPT CHALLENGE", 370, 400);
+  //You're title
+  rect(- 20, 0, 10, 40);
+  rect(- 10, 40, 10, 10);
+  rect(+ 10, 40, 10, 10);
+  rect(+ 20, 0, 10, 40);
+  rect(0, 50, 10, 50);
+  
+  rect(+ 40, 50, 20, 10);
+  rect(+ 30, 60, 10, 30);
+  rect(+ 40, 90, 20, 10);
+  rect(+ 60, 60, 10, 30);
+  
+  rect(+ 90, 60, 10, 30);
+  rect(+ 100, 90, 20, 10);
+  rect(+ 120, 60, 10, 30);
+  
+  rect(+ 150, 20, 10, 20);
+  
+  rect(+ 170, 60, 10, 40);
+  rect(+ 180, 60, 10, 10);
+  
+  rect(+ 220, 50, 20, 10);
+  rect(+ 210, 60, 10, 30);
+  rect(+ 220, 90, 20, 10);
+  rect(+ 220, 70, 20, 10);
+  rect(+ 240, 60, 10, 10);
+  
+  translate(xCookedTitle, yCookedTitle);
+  
+  //cooked part, in order, title
+  rect(- 10, 200, 20, 80);
+  rect(0, 190, 20, 20);
+  rect(+ 10, 180, 30, 20);
+  rect(+ 40, 190, 20, 20);
+  rect(0, 280, 20, 20);
+  rect(+ 10, 290, 30, 20);
+  rect(+ 40, 280, 20, 20);
+  
+  rect(+ 90, 230, 30, 20);
+  rect(+ 70, 250, 20, 40);
+  rect(+ 90, 290, 30, 20);
+  rect(+ 120, 250, 20, 40);
+  rect(+ 110, 280, 20, 20);
+  rect(+ 80, 280, 20, 20);
+  rect(+ 80, 240, 20, 20);
+  rect(+ 110, 240, 20, 20);
+  
+  
+  rect(+ 170, 230, 30, 20);
+  rect(+ 150, 250, 20, 40);
+  rect(+ 170, 290, 30, 20);
+  rect(+ 200, 250, 20, 40);
+  rect(+ 190, 280, 20, 20);
+  rect(+ 160, 280, 20, 20);
+  rect(+ 160, 240, 20, 20);
+  rect(+ 190, 240, 20, 20);
+  
+  rect(+ 240, 200, 20, 100);
+  rect(+ 280, 200, 20, 30);
+  rect(+ 260, 230, 30, 20);
+  rect(+ 260, 250, 20, 10);
+  rect(+ 280, 260, 20, 30);
+  rect(+ 290, 290, 20, 10);
+  
+  rect(+ 320, 250, 20, 40);
+  rect(+ 330, 290, 40, 20);
+  rect(+ 330, 240, 40, 20);
+  rect(+ 360, 250, 20, 20);
+  rect(+ 330, 270, 40, 10);
+  
+  rect(+ 430, 200, 20, 90);
+  rect(+ 390, 260, 20, 30);
+  rect(+ 400, 290, 40, 20);
+  rect(+ 400, 250, 30, 20);
+  
+  pop();
+
+}
+
+function instructionScreen(){
+  background(114, 186, 213); 
+  fill(203, 238, 243);
+  textSize(15);
+  textStyle(NORMAL);
+  text("YOU SCARED YOUR DAD WHILE HE WAS FLIPPING OVER YOUR DINNER,", 370, 300);
+  text("MAKE IT LAND SOFTLY AND UNHARMED ON THE GRILL OR YOU'RE COOKED.", 370, 340);
+  fill(203, 238, 243);
+  textSize(textSizeAnimation);
+  textStyle(BOLD);
+  text("PRESS → ON YOUR KEYBOARD TO ACCEPT THE CHALLENGE", 370, 440);
 }
 

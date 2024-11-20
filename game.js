@@ -83,6 +83,7 @@ function resetGame(){
   mode=2;
 }
 
+//ran into problem regarding button mechanic on win and lose "hit too hard" logic
 
 function boundries(){
  if (beefPosY >= 550 && beefPosY <= 650) {

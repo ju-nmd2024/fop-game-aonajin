@@ -232,7 +232,7 @@ function cloudAnimation(){
   leftCloudX += 0.5;  //left cloud to right
   rightCloudX -= 0.5; //right cloud to left
   /*
-  code 76 to 77 from Open AI. (2024). 
+  code 232 to 233 from Open AI. (2024). 
   Part of code for cloud animation. ChatGPT. 
   Retrieved November 13, 2024, 
   from https://chat.openai.com/
@@ -359,11 +359,12 @@ function startScreen(){
 function startScreenTextAnimation(){
   textSizeAnimation = map(sin(frameCount * sizeSpeedTextSize), -1.0, 1.0, minTextSize, maxTextSize);
   /*
-line 109 to 111 taken from mo.h, George Profenza, 
+line 360 taken from mo.h, George Profenza, 
 & Kevin Workman. (2016, February 2). How to make the size of 
 ellipse to get smaller and bigger in processing automatically. 
 Stack Overflow. https://stackoverflow.com/questions/35156661/how-to-make-the-size-of-ellipse-to-get-smaller-and-bigger-in-processing-automati 
-*/
+, reworked by enickles on p5js https://editor.p5js.org/enickles/sketches/SkDt1quAX
+ */
 } //end start screen animation
 
 function fallingMechanics(){
@@ -381,7 +382,7 @@ function fallingMechanics(){
 }
 
 function playerMechanics(){
-  if (keyIsDown(87)) {   //W key or up
+  if (keyIsPressed && key === ' ') {   //spacebar key or up
     boost -= 1;
     playerVelX = 1;
     beefPosY -= beefSpeed;
@@ -733,11 +734,26 @@ function instructionScreen(){
   fill(203, 238, 243);
   textSize(16);
   textStyle(NORMAL);
-  text("YOU SCARED YOUR DAD WHILE HE WAS FLIPPING OVER YOUR DINNER,", 370, 300);
-  text("MAKE IT LAND SOFTLY AND UNHARMED ON THE GRILL OR YOU'RE COOKED.", 370, 340);
+  text("YOU SCARED YOUR DAD WHILE HE WAS FLIPPING OVER YOUR DINNER,", 370, 240);
+  text("MAKE IT LAND SOFTLY AND UNHARMED ON THE GRILL OR YOU'RE COOKED.", 370, 270);
+  textStyle(ITALIC);
+  text("PRESS A AND D FOR SIDE TO SIDE MOVEMENT", 380, 360);
+  text("PRESS THE SPACEBAR FOR UPWARD MOVEMENT", 370, 390);
   fill(203, 238, 243);
   textSize(textSizeAnimation);
   textStyle(BOLD);
   text("PRESS → ON YOUR KEYBOARD TO ACCEPT THE CHALLENGE", 370, 440);
 }
+
+/*
+reference list / sources to acquaint myself with everything
+
+for understanding how i can structure my code the easiest and understand game modes more
+Erdreich, J. (2020, March 26). YouTubeProgramming a Retro-Style video game in P5.js 
+- Part 1 - Creating the Game Shell. YouTube. https://www.youtube.com/watch?v=FZlpuQeCvlk 
+
+for the idea of randomising y positioning
+Morton, T. J. (2024, April 22). p5.js Tutorial - Creating a simple catching game 
+in JavaScript with mouse interaction. YouTube. https://www.youtube.com/watch?v=-2Qe0Lj4cp0 
+*/
 

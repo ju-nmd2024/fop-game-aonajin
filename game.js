@@ -31,8 +31,11 @@ let tryAgainWidth = 150;
 let tryAgainHeight = 50;
 
 const softLandingThreshold = 2; 
-let paused = false;
 
+let paused = false;
+let floorMessage = false;
+let hitTooHardMessage = false;
+let happyMessage = false;
 
 function setup() {
   mode = 0; //game hasn't started
@@ -83,87 +86,45 @@ function resetGame(){
   mode=2;
 }
 
-//ran into problem regarding button mechanic on win and lose "hit too hard" logic
-
 function boundries(){
- if (beefPosY >= 550 && beefPosY <= 650) {
-    if(beefPosX >= 220 && beefPosX <= 510){
-      gravity = 0;
-      beefSpeed = 0;
-      if(playerVelX <= softLandingThreshold) {
-        fill(114, 186, 213);
-        rect(0, 0, 740, 640);
-        grill();
-        drawCookedBeef(beefPosX, beefPosY);
-        fill(255);
-        textStyle(BOLD);
-        textSize(textSizeAnimation);
-        text("DAD'S HAPPY!", width / 2, height / 2);
-        textSize(15);
-        text("YOU DID GOOD", width / 2, 350);
-        text("WANNA TRY AGAIN?", width / 2, 370);
-        paused = true;
-        fill(173, 181, 189);
-        rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
-        rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
-        rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
-        fill(255);
-        textStyle(BOLD);
-        textSize(18);
-        text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);
-      }else {
-        (playerVelX = softLandingThreshold);
-        fill(255, 255, 255);
-        textStyle(NORMAL);
-        text("YOU HIT IT TOO HARD!", width / 2, height / 2);
-        textSize(15);
-        text("TRY AGAIN?", width / 2, 350);
-        paused = true;
-        fill(173, 181, 189);
-        rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
-        rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
-        rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
-        fill(255);
-        textStyle(BOLD);
-        textSize(18);
-        text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);
-    }
-  }else{ 
-    gravity = 0;
-    beefSpeed = 0;
-    gravity = 0;
-    paused = true;
-    textStyle(NORMAL);
-    fill(255, 255, 255);
-    text("IT'S ON THE FLOOR!", width / 2, height / 2);
-    textSize(15);
-    text("TRY AGAIN?", width / 2, 350);}
-    fill(173, 181, 189);
-    rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
-    rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
-    rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
-    fill(255);
-    textStyle(BOLD);
-    textSize(18);
-    text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);
-}
-else if (beefPosY > height) {    //below canvas 
+  floorMessage = false;
+  hitTooHardMessage = false;
+  happyMessage = false;
+
+  if (beefPosY >= 560 && beefPosY <= 640 && beefPosX >= 210 && beefPosX <= 520 && playerVelX < softLandingThreshold) {
   gravity = 0;
   beefSpeed = 0;
+  
   paused = true;
-  text("DAD'S GONNA KILL YOU", width / 2, height / 2);
-  textSize(15);
-  text("TRY AGAIN?", width / 2, 350);
-  fill(173, 181, 189);
-  rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
-  rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
-  rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
-  fill(255);
-  textStyle(BOLD);
-  textSize(18);
-  text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);
+  happyMessage = true;
+  
+  }
+
+else if (beefPosY >= 560 && beefPosY <= 640 && beefPosX >= 210 && beefPosX <= 520 && playerVelX > softLandingThreshold) {
+    gravity = 0;
+    beefSpeed = 0;
+
+    paused = true;
+    hitTooHardMessage = true;
+  }
+
+else if (beefPosY >= 600 && beefPosY <= 640 && beefPosX >= 0 && beefPosX <= 210) {
+    gravity = 0;
+    beefSpeed = 0;
+  
+    paused = true;
+    floorMessage = true;
+  }
+
+else if (beefPosY >= 600 && beefPosY <= 640 && beefPosX >= 520 && beefPosX <= 740) {
+    gravity = 0;
+    beefSpeed = 0;
+
+    paused = true;
+    floorMessage = true;
+  }
 }
-}
+
 
 function mouseInsideTryAgainButton(){
   return mouseX > tryAgainX && mouseX < tryAgainX +
@@ -174,12 +135,71 @@ function mousePressed(){
   if (mouseInsideTryAgainButton()) {
     resetGame();
     paused = false;
+    floorMessage = false;
+    hitTooHardMessage = false;
+    happyMessage = false;
   }
 }
 
 function draw() {
   startState();
   boundries();
+  if (floorMessage) {
+    textStyle(NORMAL);
+    fill(255, 255, 255);
+    text("IT'S ON THE FLOOR!", width / 2, height / 2);
+    textSize(15);
+    text("TRY AGAIN?", width / 2, 350);
+  
+    fill(173, 181, 189);
+    rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
+    rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
+    rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
+    fill(255);
+    textStyle(BOLD);
+    textSize(18);
+    text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);}
+
+  if (hitTooHardMessage){
+    fill(255, 255, 255);
+    textStyle(NORMAL);
+    text("YOU HIT IT TOO HARD!", width / 2, height / 2);
+    textSize(15);
+    text("TRY AGAIN?", width / 2, 350);
+    
+    fill(173, 181, 189);
+    rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
+    rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
+    rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
+    fill(255);
+    textStyle(BOLD);
+    textSize(18);
+    text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);
+  }
+  if (happyMessage) {
+    fill(114, 186, 213);
+    rect(0, 0, 740, 640);
+    grill();
+    drawCookedBeef(beefPosX, beefPosY);
+
+    fill(255);
+    textStyle(BOLD);
+    textSize(textSizeAnimation);
+    text("DAD'S HAPPY!", width / 2, height / 2);
+    textSize(15);
+    text("YOU DID GOOD", width / 2, 350);
+    text("WANNA TRY AGAIN?", width / 2, 370);
+      
+    fill(173, 181, 189);
+    rect(tryAgainX + 100, tryAgainY - 10, 20, 20);
+    rect(tryAgainX + 10, tryAgainY + 40, 20, 20);
+    rect(tryAgainX, tryAgainY, tryAgainWidth, tryAgainHeight, 30);
+    fill(255);
+    textStyle(BOLD);
+    textSize(18);
+    text("TRY AGAIN", tryAgainX + 75, tryAgainY + 33);
+  }
+  
 } //close draw
 
 function startState(){
